@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arena Rúnica</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="menu" class="overlay">
+    <div class="panel menu-panel">
+      <h1 class="logo">Arena Rúnica</h1>
+      <p class="subtitle">Um MOBA de navegador · Você contra bots</p>
+
+      <h3>Escolha seu herói</h3>
+      <div id="heroes" class="heroes"></div>
+      <div id="hero-detail" class="hero-detail"></div>
+
+      <div class="options">
+        <div>
+          <h3>Modo</h3>
+          <div class="seg">
+            <button data-size="1">1 vs 1</button>
+            <button data-size="3">3 vs 3</button>
+            <button data-size="5">5 vs 5</button>
+          </div>
+        </div>
+        <div>
+          <h3>Dificuldade</h3>
+          <div class="seg">
+            <button data-diff="facil">Fácil</button>
+            <button data-diff="normal">Normal</button>
+            <button data-diff="dificil">Difícil</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="play" class="big">JOGAR</button>
+
+      <details class="controls">
+        <summary>Controles e objetivo</summary>
+        <p><b>Objetivo:</b> avance pelas rotas com suas tropas, derrube as torres inimigas e destrua o <b>Núcleo</b> vermelho no canto superior direito.</p>
+        <ul>
+          <li><b>Botão direito</b> — mover / atacar (no chão, inimigo ou minimapa)</li>
+          <li><b>Q W E R</b> — habilidades (miram no cursor; R libera no nível 6)</li>
+          <li><b>D</b> Lampejo · <b>F</b> Cura</li>
+          <li><b>A</b> + clique esquerdo — mover atacando · <b>S</b> — parar</li>
+          <li><b>B</b> — voltar à base · <b>P</b> — loja · <b>1–6</b> — usar item</li>
+          <li><b>Tab</b> — placar · <b>Y</b> — travar/destravar câmera · <b>Espaço</b> — centralizar</li>
+          <li><b>Esc</b> — pausar</li>
+        </ul>
+        <p>Dica: dê o último golpe nas tropas para ganhar ouro, e não fique sob a torre inimiga sem tropas aliadas na frente!</p>
+      </details>
+    </div>
+  </div>
+
+  <div id="shop" class="overlay hidden">
+    <div class="panel shop-panel">
+      <div class="shop-head">
+        <h2>Loja</h2>
+        <div class="gold"><span class="coin"></span><span id="shop-gold">0</span></div>
+        <button id="shop-close">Fechar (P)</button>
+      </div>
+      <p id="shop-status"></p>
+      <div id="shop-items" class="shop-items"></div>
+      <h3>Inventário</h3>
+      <div id="shop-inv" class="shop-inv"></div>
+    </div>
+  </div>
+
+  <div id="score" class="overlay hidden"></div>
+
+  <div id="pause" class="overlay hidden">
+    <div class="panel small">
+      <h2>Jogo pausado</h2>
+      <div class="row"><button id="resume" class="big">Continuar</button><button id="quit">Sair para o menu</button></div>
+    </div>
+  </div>
+
+  <div id="end" class="overlay hidden"></div>
+  <div id="toast"></div>
+
+  <script src="js/util.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
