@@ -67,6 +67,11 @@ a ordem de compra dos bots (`build`) e 4 habilidades. Cada habilidade define `cd
 um tipo `ai` (para os bots saberem quando usá-la), `desc(h)` e `cast(h, x, y)`. Use os auxiliares
 `dealDamage`, `enemiesInRadius`, `fireSkillshot`, `addZone`, `addDelayed`, `startDash`, `blink` e `addBuff`.
 
+## Outros jogos neste repositório
+
+- **[Terra Cinza](terra-cinza/)**: aventura de ação pós-apocalíptica com visão de cima, em pixel art,
+  jogável no navegador e no celular. Abra `terra-cinza/index.html`.
+
 ## Publicar no GitHub Pages
 
 Em *Settings → Pages*, escolha a branch e a pasta raiz (`/`). O jogo ficará disponível em
