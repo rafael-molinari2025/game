@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05101a">
+  <meta name="description" content="Assistente pessoal de voz">
+  <title>Jarvis</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">J.A.R.V.I.S.</div>
+    <div class="top-actions">
+      <button id="btnMute" class="icon-btn" title="Ligar/desligar voz" aria-label="Ligar ou desligar voz">🔊</button>
+      <button id="btnSettings" class="icon-btn" title="Configurações" aria-label="Configurações">⚙️</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hud">
+      <div id="orb" class="orb idle" aria-hidden="true">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="core"></div>
+      </div>
+      <div id="status" class="status">Toque no microfone para falar</div>
+      <div id="interim" class="interim"></div>
+    </section>
+
+    <section id="chat" class="chat" aria-live="polite"></section>
+  </main>
+
+  <footer class="composer">
+    <form id="form" autocomplete="off">
+      <input id="input" type="text" placeholder="Digite ou toque no microfone…" aria-label="Mensagem">
+      <button type="submit" class="send-btn" aria-label="Enviar">➤</button>
+    </form>
+    <button id="btnMic" class="mic-btn" aria-label="Falar">🎤</button>
+  </footer>
+
+  <dialog id="settings">
+    <form method="dialog" class="settings-form">
+      <h2>Configurações</h2>
+
+      <label>Chave da API do Gemini (gratuita)
+        <input id="cfgKey" type="password" placeholder="Cole sua chave aqui" autocomplete="off">
+      </label>
+      <p class="hint">Pegue em <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Ela fica salva só neste aparelho.</p>
+
+      <label>Modelo
+        <input id="cfgModel" type="text" placeholder="gemini-2.5-flash">
+      </label>
+
+      <label>Como devo te chamar?
+        <input id="cfgName" type="text" placeholder="Ex.: Rafael, senhor, chefe…">
+      </label>
+
+      <label>Cidade padrão (para o clima)
+        <input id="cfgCity" type="text" placeholder="Ex.: São Paulo">
+      </label>
+
+      <label class="check"><input id="cfgConversation" type="checkbox"> Modo conversa (volta a ouvir depois de responder)</label>
+      <label class="check"><input id="cfgWake" type="checkbox"> Ficar ouvindo "Jarvis" (melhor no computador)</label>
+
+      <details>
+        <summary>Memória e dados</summary>
+        <div id="memList" class="mem-list"></div>
+        <div class="row">
+          <button type="button" id="btnClearChat" class="ghost">Limpar conversa</button>
+          <button type="button" id="btnClearMem" class="ghost danger">Apagar memória</button>
+        </div>
+      </details>
+
+      <div class="row end">
+        <button value="close" class="primary">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

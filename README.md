@@ -71,3 +71,7 @@ um tipo `ai` (para os bots saberem quando usá-la), `desc(h)` e `cast(h, x, y)`.
 
 Em *Settings → Pages*, escolha a branch e a pasta raiz (`/`). O jogo ficará disponível em
 `https://<usuario>.github.io/<repositorio>/`.
+
+## Jarvis
+
+A pasta [`jarvis/`](jarvis/) tem um assistente pessoal de voz (PWA) para celular e computador. Veja [jarvis/README.md](jarvis/README.md).
