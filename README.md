@@ -53,6 +53,7 @@ index.html      página, menus e sobreposições
 style.css       estilo dos menus, loja e placar
 js/util.js      funções auxiliares (matemática, aleatoriedade)
 js/data.js      mapa, rotas, torres, tropas, monstros, itens e heróis/habilidades
+js/skins.js     skins pagas: catálogo, links do Stripe, desbloqueio e retorno da compra
 js/game.js      simulação: unidades, combate, buffs, projéteis, ondas, recompensas
 js/ai.js        inteligência artificial dos heróis bots
 js/render.js    desenho do mapa, unidades, efeitos, névoa, HUD e minimapa
@@ -66,6 +67,33 @@ Adicione uma entrada em `HEROES` (`js/data.js`) com os atributos base, o crescim
 a ordem de compra dos bots (`build`) e 4 habilidades. Cada habilidade define `cd`, `cost`, `range`,
 um tipo `ai` (para os bots saberem quando usá-la), `desc(h)` e `cast(h, x, y)`. Use os auxiliares
 `dealDamage`, `enemiesInRadius`, `fireSkillshot`, `addZone`, `addDelayed`, `startDash`, `blink` e `addBuff`.
+
+## Skins pagas (Stripe Payment Links)
+
+O menu mostra as skins do herói escolhido. Skins bloqueadas abrem um **Payment Link** do Stripe;
+depois do pagamento, o Stripe redireciona para
+`https://rafael-molinari2025.github.io/game/?compra=<sku>&cs={CHECKOUT_SESSION_ID}` e o jogo
+desbloqueia e equipa a skin (salva no `localStorage` deste navegador).
+
+| SKU | Produto | Preço |
+|---|---|---|
+| `kael_eclipse` | Skin Kael Eclipse Lunar | R$ 4,90 |
+| `lyra_aurora` | Skin Lyra Aurora Boreal | R$ 4,90 |
+| `morvek_inferno` | Skin Morvek Chama Infernal | R$ 4,90 |
+| `thorn_glacial` | Skin Thorn Cristal Glacial | R$ 4,90 |
+| `pacote_runico` | Pacote Rúnico (as 4 skins) | R$ 14,90 |
+
+Os links em `js/skins.js` são de **modo de teste** (`buy.stripe.com/test_...`); pague com o cartão
+`4242 4242 4242 4242`, qualquer data futura e qualquer CVC.
+
+**Limitações (sem servidor):** o desbloqueio é por confiança — quem conhecer a URL de retorno
+consegue liberar a skin, e as skins não acompanham o jogador em outro navegador. Para itens apenas
+visuais isso é aceitável; para verificar pagamentos de verdade, adicione uma função serverless que
+confirme a Checkout Session com o Stripe (ou um webhook `checkout.session.completed`).
+
+**Para ir para produção:** recrie os produtos e Payment Links no modo live (mesma URL de
+redirecionamento), troque os links em `js/skins.js` e revise o checklist
+<https://docs.stripe.com/get-started/checklist/go-live>.
 
 ## Publicar no GitHub Pages
 

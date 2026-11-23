@@ -26,8 +26,10 @@ genScenery();
 resize();
 window.addEventListener('resize', resize);
 setupInput();
+const purchaseMsg = handlePurchaseReturn();
 setupMenu();
 setupOverlays();
+if (purchaseMsg) toast(purchaseMsg, 5000);
 requestAnimationFrame(loop);
 
 // Ganchos para testes automatizados
