@@ -216,13 +216,27 @@ function drawUnit(g, u) {
       ctx.fillStyle = '#dee2e6'; ctx.fillRect(u.r - 4, -3, u.r * 1.4, 6);
       ctx.fillStyle = '#868e96'; ctx.fillRect(u.r - 8, -7, 6, 14);
     } else {
-      ctx.strokeStyle = u.def.color; ctx.lineWidth = 4;
+      ctx.strokeStyle = heroColor(u); ctx.lineWidth = 4;
       ctx.beginPath(); ctx.arc(u.r - 2, 0, 14, -1.2, 1.2); ctx.stroke();
     }
     ctx.restore();
     // Corpo
     const gr = ctx.createRadialGradient(u.x - 8, u.y - 8, 4, u.x, u.y, u.r);
-    gr.addColorStop(0, '#fff'); gr.addColorStop(0.25, u.def.color); gr.addColorStop(1, shade(u.def.color, -0.35));
+    const hc = heroColor(u);
+    if (u.skin) {
+      // Aura da skin: brilho suave e faíscas orbitando
+      ctx.save();
+      ctx.shadowColor = u.skin.accent; ctx.shadowBlur = 18;
+      ctx.strokeStyle = hexA(u.skin.accent, 0.55); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(u.x, u.y, u.r + 5, 0, TAU); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = u.skin.accent;
+      for (let i = 0; i < 3; i++) {
+        const sa = G.time * 2.2 + (i * TAU) / 3;
+        ctx.beginPath(); ctx.arc(u.x + Math.cos(sa) * (u.r + 9), u.y + Math.sin(sa) * (u.r + 9), 2.5, 0, TAU); ctx.fill();
+      }
+    }
+    gr.addColorStop(0, '#fff'); gr.addColorStop(0.25, hc); gr.addColorStop(1, shade(hc, -0.35));
     ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(u.x, u.y, u.r, 0, TAU); ctx.fill();
     ctx.strokeStyle = TEAM_COLORS[u.team]; ctx.lineWidth = 4; ctx.stroke();
     ctx.fillStyle = '#111'; ctx.font = 'bold 20px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -521,7 +535,7 @@ function drawHUD(g) {
 
   // Retrato
   ctx.save();
-  ctx.beginPath(); ctx.arc(55, 52, 38, 0, TAU); ctx.fillStyle = p.def.color; ctx.fill();
+  ctx.beginPath(); ctx.arc(55, 52, 38, 0, TAU); ctx.fillStyle = heroColor(p); ctx.fill();
   ctx.lineWidth = 4; ctx.strokeStyle = TEAM_COLORS[p.team]; ctx.stroke();
   ctx.fillStyle = '#111'; ctx.font = 'bold 34px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(p.def.name[0], 55, 54);
@@ -643,7 +657,7 @@ function drawMinimap(g) {
   for (const hh of g.heroes) {
     if (hh.dead || (hh.team !== team && !hh.visible[team])) continue;
     const ux = x + hh.x * k, uy = y + hh.y * k;
-    ctx.beginPath(); ctx.arc(ux, uy, 6, 0, TAU); ctx.fillStyle = hh.def.color; ctx.fill();
+    ctx.beginPath(); ctx.arc(ux, uy, 6, 0, TAU); ctx.fillStyle = heroColor(hh); ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = hh.isPlayer ? '#fff' : TEAM_COLORS[hh.team]; ctx.stroke();
   }
   // Retângulo da câmera

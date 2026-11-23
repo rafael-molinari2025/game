@@ -8,11 +8,11 @@ const $ = (id) => document.getElementById(id);
 const menuState = { heroId: 'kael', teamSize: 5, difficulty: 'normal' };
 let toastTimer = 0;
 
-function toast(msg) {
+function toast(msg, ms = 1300) {
   const el = $('toast');
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 1300);
+  toastTimer = setTimeout(() => el.classList.remove('show'), ms);
 }
 
 function hudHit(x, y) {
@@ -186,7 +186,8 @@ function setupMenu() {
     const el = document.createElement('button');
     el.className = 'hero-card' + (id === menuState.heroId ? ' selected' : '');
     el.dataset.id = id;
-    el.innerHTML = `<div class="hero-icon" style="--c:${d.color}">${d.name[0]}</div>
+    const sk = equippedSkin(id);
+    el.innerHTML = `<div class="hero-icon" style="--c:${sk ? sk.color : d.color}">${d.name[0]}</div>
       <div class="hero-name">${d.name}</div><div class="hero-title">${d.title}</div>
       <div class="hero-role">${d.role} · ${d.melee ? 'Corpo a corpo' : 'À distância'}</div>`;
     el.addEventListener('click', () => { menuState.heroId = id; setupMenu(); });
@@ -195,6 +196,7 @@ function setupMenu() {
   const d = HEROES[menuState.heroId];
   $('hero-detail').innerHTML = `<p>${d.desc}</p><ul>` +
     d.abilities.map((a) => `<li><b class="key">${a.key}</b> <b>${a.name}</b> — ${a.desc(fakeHero(d))}</li>`).join('') + '</ul>';
+  renderSkinPicker();
   for (const b of document.querySelectorAll('[data-size]')) {
     b.classList.toggle('selected', Number(b.dataset.size) === menuState.teamSize);
     b.onclick = () => { menuState.teamSize = Number(b.dataset.size); setupMenu(); };
@@ -206,13 +208,40 @@ function setupMenu() {
   $('play').onclick = startGame;
 }
 
+// Seletor de skins do herói escolhido (compra via Stripe Payment Links)
+function renderSkinPicker() {
+  const box = $('skins');
+  if (!box) return;
+  const heroId = menuState.heroId, d = HEROES[heroId];
+  const cur = equippedSkin(heroId);
+  let html = '<div class="skin-list">' +
+    `<button class="skin-card${cur ? '' : ' selected'}" data-skin=""><span class="skin-swatch" style="--c:${d.color}"></span><span class="skin-name">Padrão</span><span class="skin-tag">Grátis</span></button>`;
+  for (const s of skinsForHero(heroId)) {
+    if (ownsSkin(s.id)) {
+      html += `<button class="skin-card${cur && cur.id === s.id ? ' selected' : ''}" data-skin="${s.id}"><span class="skin-swatch" style="--c:${s.color};--a:${s.accent}"></span><span class="skin-name">${s.name}</span><span class="skin-tag">Sua</span></button>`;
+    } else {
+      html += `<a class="skin-card locked" href="${s.link}" rel="noopener"><span class="skin-swatch" style="--c:${s.color};--a:${s.accent}"></span><span class="skin-name">${s.name}</span><span class="skin-tag buy">Comprar ${s.price}</span></a>`;
+    }
+  }
+  html += '</div>';
+  if (!SKIN_BUNDLE.unlocks.every(ownsSkin)) {
+    html += `<a class="bundle" href="${SKIN_BUNDLE.link}" rel="noopener"><b>${SKIN_BUNDLE.name}</b> — as 4 skins por <b>${SKIN_BUNDLE.price}</b></a>`;
+  }
+  html += '<p class="skin-note">Skins são apenas visuais e ficam salvas neste navegador. Pagamento seguro pelo Stripe.</p>';
+  box.innerHTML = html;
+  for (const b of box.querySelectorAll('button[data-skin]')) {
+    b.onclick = () => { equipSkin(heroId, b.dataset.skin || null); setupMenu(); };
+  }
+}
+
 // Herói "fantasma" de nível 1 apenas para mostrar os números na descrição
 function fakeHero(def) {
   return { level: 1, def, ad: def.ad, ap: def.ap, maxHp: def.hp, buffs: [] };
 }
 
 function startGame() {
-  newGame({ heroId: menuState.heroId, teamSize: menuState.teamSize, difficulty: menuState.difficulty });
+  const sk = equippedSkin(menuState.heroId);
+  newGame({ heroId: menuState.heroId, teamSize: menuState.teamSize, difficulty: menuState.difficulty, skinId: sk ? sk.id : null });
   $('menu').classList.add('hidden');
   $('end').classList.add('hidden');
   centerCameraOn(G.player.x, G.player.y);
@@ -269,7 +298,7 @@ function renderShop() {
 function renderScoreboard() {
   const rows = (team) => G.heroes.filter((h) => h.team === team).map((h) => `
     <tr class="${h.isPlayer ? 'me' : ''}">
-      <td><span class="dot" style="background:${h.def.color}"></span>${h.isPlayer ? 'Você' : h.name} <small>${h.def.name}</small></td>
+      <td><span class="dot" style="background:${heroColor(h)}"></span>${h.isPlayer ? 'Você' : h.name} <small>${h.def.name}</small></td>
       <td>${h.level}</td><td>${h.kills}/${h.deaths}/${h.assists}</td><td>${h.cs}</td><td>${fmtN(h.gold)}</td>
       <td class="items">${h.items.map((id) => `<span class="mini" style="--c:${ITEM_MAP[id].color}" title="${ITEM_MAP[id].name}">${ITEM_MAP[id].abbr}</span>`).join('')}</td>
       <td>${h.dead ? '💀 ' + Math.ceil(h.respawn) + 's' : ''}</td>

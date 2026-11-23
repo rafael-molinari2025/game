@@ -123,7 +123,7 @@ function newGame(opts) {
       if (!isPlayer) h.ai = { timer: rand(0, 0.6), state: 'lane', buildIdx: 0, diff: team === 0 ? 'normal' : opts.difficulty };
       g.units.push(h);
       g.heroes.push(h);
-      if (isPlayer) g.player = h;
+      if (isPlayer) { g.player = h; h.skin = (opts.skinId && SKINS[opts.skinId]) || null; }
     }
   }
   computeVuln(g);
